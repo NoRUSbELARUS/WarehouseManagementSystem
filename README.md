@@ -1,6 +1,6 @@
 # Warehouse Management System
 
-**Warehouse Management System** — это приложение для учета товаров, складов, поставок и заказов, предоставляющее интерфейс для работы с Товары, Склады, Категории, Поставщики, Заказы, Сотрудники, Ячейки хранения.
+**Warehouse Management System** — это приложение для учета товаров, складов, поставок и заказов, предоставляющее интерфейс для работы с товарами, складами, категориями, Поставщиками, заказами, сотрудниками, ячейками хранения.
 
 Ссылка на SonarCloud: https://sonarcloud.io/project/configuration?id=NoRUSbELARUS_WarehouseManagementSystem
 
