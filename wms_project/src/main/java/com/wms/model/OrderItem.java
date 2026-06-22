@@ -1,11 +1,6 @@
 package com.wms.model;
 
-import java.util.UUID;
-
 public class OrderItem {
-    private UUID id;
-    private UUID orderId;
-    private UUID productId;
     private int quantity;
     private double priceAtOrder;
     private String productName; // Для удобства вывода
