@@ -1,0 +1,14 @@
+target/
+*.class
+
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+*.log
+tmp/
+
+src/main/resources/db.properties
