@@ -9,12 +9,10 @@ import java.util.UUID;
 public class OrderItemDAO {
     private final Connection connection;
 
-    // Конструктор (исправляет ошибку "Constructor undefined")
     public OrderItemDAO(Connection connection) {
         this.connection = connection;
     }
 
-    // Метод добавления (addProductToOrder)
     public void addProductToOrder(UUID orderId, UUID productId, int quantity) throws SQLException {
         double currentPrice = 0;
         String priceSql = "SELECT unit_price FROM products WHERE id = ?";
@@ -38,7 +36,6 @@ public class OrderItemDAO {
         }
     }
 
-    // Метод получения деталей (getOrderDetails)
     public List<OrderItem> getOrderDetails(UUID orderId) throws SQLException {
         List<OrderItem> items = new ArrayList<>();
         String sql = "SELECT oi.*, p.name FROM order_items oi " +
@@ -58,7 +55,6 @@ public class OrderItemDAO {
         return items;
     }
 
-    // Метод обновления (updateQuantity)
     public void updateQuantity(UUID orderId, UUID productId, int newQuantity) throws SQLException {
         String sql = "UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -69,7 +65,6 @@ public class OrderItemDAO {
         }
     }
 
-    // Метод удаления (removeItemFromOrder)
     public void removeItemFromOrder(UUID orderId, UUID productId) throws SQLException {
         String sql = "DELETE FROM order_items WHERE order_id = ? AND product_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
