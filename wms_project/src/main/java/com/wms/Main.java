@@ -1,82 +1,118 @@
 package com.wms;
 
-import com.wms.dao.OrderItemDAO;
-import com.wms.model.OrderItem;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.UUID;
+import com.wms.dao.*;
+import com.wms.model.*;
+import java.sql.*;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         Properties props = new Properties();
-        
-        try (var is = Main.class.getClassLoader().getResourceAsStream("db.properties")) {
-            if (is == null) {
-                System.err.println("Ошибка: Файл db.properties не найден в папке resources!");
-                return;
-            }
+        try (var is = Main.class.getResourceAsStream("/db.properties")) {
+            if (is == null) throw new RuntimeException("db.properties not found");
             props.load(is);
-            
-            Connection conn = DriverManager.getConnection(
-                props.getProperty("db.url"), 
-                props.getProperty("db.user"), 
-                props.getProperty("db.password")
-            );
 
-            // Создаем Scanner внутри try-with-resources
-            try (Scanner scanner = new Scanner(System.in)) {
-                OrderItemDAO dao = new OrderItemDAO(conn);
+            try (Connection conn = DriverManager.getConnection(
+                    props.getProperty("db.url"), props.getProperty("db.user"), props.getProperty("db.password"));
+                 Scanner scanner = new Scanner(System.in)) {
+
+                WarehouseDAO warehouseDAO = new WarehouseDAO(conn);
+                CatalogDAO catalogDAO = new CatalogDAO(conn);
+                EmployeeDAO employeeDAO = new EmployeeDAO(conn);
+                OrderItemDAO orderItemDAO = new OrderItemDAO(conn);
+                OrderDAO orderDAO = new OrderDAO(conn);
 
                 while (true) {
-                    System.out.println("\n--- WMS Order Items Management ---");
-                    System.out.println("1. Посмотреть товары в заказе");
-                    System.out.println("2. Добавить товар в заказ");
-                    System.out.println("3. Изменить количество");
-                    System.out.println("4. Удалить товар из заказа");
-                    System.out.println("0. Выход");
-                    System.out.print("Выбор: ");
+                    System.out.println("\n========== СИСТЕМА УПРАВЛЕНИЯ СКЛАДОМ (WMS) ==========");
+                    System.out.println("1. СКЛАДЫ: Просмотр складов и ячеек");
+                    System.out.println("2. КАТАЛОГ: Просмотр товаров и категорий");
+                    System.out.println("3. ПЕРСОНАЛ: Список сотрудников");
+                    System.out.println("4. ЗАКАЗЫ: Управление позициями (Many-to-Many)");
+                    System.out.println("0. ВЫХОД");
+                    System.out.print("Выберите раздел: ");
 
-                    int choice = Integer.parseInt(scanner.nextLine());
-                    if (choice == 0) break;
+                    String rootChoice = scanner.nextLine();
+                    if ("0".equals(rootChoice)) break;
 
-                    System.out.print("Введите UUID заказа: ");
-                    UUID orderId = UUID.fromString(scanner.nextLine());
-
-                    switch (choice) {
-                        case 1:
-                            List<OrderItem> items = dao.getOrderDetails(orderId);
-                            items.forEach(System.out::println);
+                    switch (rootChoice) {
+                        case "1":
+                            showWarehouseMenu(scanner, warehouseDAO);
                             break;
-                        case 2:
-                            System.out.print("Введите UUID товара: ");
-                            UUID prodId = UUID.fromString(scanner.nextLine());
-                            System.out.print("Количество: ");
-                            int qty = Integer.parseInt(scanner.nextLine());
-                            dao.addProductToOrder(orderId, prodId, qty);
-                            System.out.println("Успешно добавлено.");
+                        case "2":
+                            showCatalogMenu(scanner, catalogDAO);
                             break;
-                        case 3:
-                            System.out.print("Введите UUID товара: ");
-                            UUID pId = UUID.fromString(scanner.nextLine());
-                            System.out.print("Новое количество: ");
-                            int newQty = Integer.parseInt(scanner.nextLine());
-                            dao.updateQuantity(orderId, pId, newQty);
-                            System.out.println("Количество обновлено.");
+                        case "3":
+                            System.out.println("\n--- СОТРУДНИКИ ---");
+                            employeeDAO.getAll().forEach(System.out::println);
                             break;
-                        case 4:
-                            System.out.print("Введите UUID товара для удаления: ");
-                            UUID delId = UUID.fromString(scanner.nextLine());
-                            dao.removeItemFromOrder(orderId, delId);
-                            System.out.println("Товар удален из заказа.");
+                        case "4":
+                            showOrderMenu(scanner, orderItemDAO, orderDAO);
                             break;
+                        default:
+                            System.out.println("Неверный ввод.");
                     }
                 }
-            } // Scanner автоматически закроется здесь
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private static void showWarehouseMenu(Scanner sc, WarehouseDAO dao) throws SQLException {
+        System.out.println("\n--- СПИСОК СКЛАДОВ ---");
+        List<Warehouse> whs = dao.getAll();
+        whs.forEach(System.out::println);
+        System.out.print("\nВведите ID склада для просмотра ячеек (или Enter для отмены): ");
+        String idStr = sc.nextLine();
+        if (!idStr.isEmpty()) {
+            dao.getBinsByWarehouse(UUID.fromString(idStr)).forEach(System.out::println);
+        }
+    }
+
+    private static void showCatalogMenu(Scanner sc, CatalogDAO dao) throws SQLException {
+        System.out.println("\n--- КАТАЛОГ ---");
+        System.out.println("1. Все товары");
+        System.out.println("2. Все категории");
+        System.out.print("Выбор: ");
+        String choice = sc.nextLine();
+        if ("1".equals(choice)) dao.getAllProducts().forEach(System.out::println);
+        else if ("2".equals(choice)) dao.getAllCategories().forEach(System.out::println);
+    }
+
+    private static void showOrderMenu(Scanner sc, OrderItemDAO itemDao, OrderDAO orderDao) throws SQLException {
+    while (true) {
+        System.out.println("\n--- УПРАВЛЕНИЕ ЗАКАЗАМИ ---");
+        System.out.println("1. Список ВСЕХ заказов");
+        System.out.println("2. Посмотреть позиции конкретного заказа");
+        System.out.println("3. Добавить товар в заказ");
+        System.out.println("0. Назад");
+        System.out.print("Выбор: ");
+        
+        String choice = sc.nextLine();
+        if ("0".equals(choice)) break;
+
+        if ("1".equals(choice)) {
+            System.out.println("\n--- РЕЕСТР ЗАКАЗОВ ---");
+            orderDao.getAllOrders().forEach(System.out::println);
+            continue;
+        }
+        
+        System.out.print("Введите UUID заказа (скопируйте из списка выше): ");
+        String idInput = sc.nextLine();
+        if (idInput.isEmpty()) continue;
+        UUID oid = UUID.fromString(idInput);
+
+        if ("2".equals(choice)) {
+            System.out.println("\nСостав заказа:");
+            itemDao.getOrderDetails(oid).forEach(System.out::println);
+        } else if ("3".equals(choice)) {
+            System.out.print("Введите UUID товара: ");
+            UUID pid = UUID.fromString(sc.nextLine());
+            System.out.print("Количество: ");
+            int q = Integer.parseInt(sc.nextLine());
+            itemDao.addProductToOrder(oid, pid, q);
+            System.out.println("Товар успешно добавлен в заказ.");
+        }
+    }
+}
 }

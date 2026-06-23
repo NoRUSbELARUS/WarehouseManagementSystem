@@ -3,9 +3,8 @@ package com.wms.model;
 public class OrderItem {
     private int quantity;
     private double priceAtOrder;
-    private String productName; // Для удобства вывода
+    private String productName;
 
-    // Геттеры и сеттеры
     public void setProductName(String productName) { this.productName = productName; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setPriceAtOrder(double priceAtOrder) { this.priceAtOrder = priceAtOrder; }
