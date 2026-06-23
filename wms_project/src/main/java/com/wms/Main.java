@@ -54,8 +54,8 @@ public class Main {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+    System.err.println("Critical error: " + e.getMessage());
+}
     }
 
     private static void showWarehouseMenu(Scanner sc, WarehouseDAO dao) throws SQLException {
@@ -80,38 +80,40 @@ public class Main {
     }
 
     private static void showOrderMenu(Scanner sc, OrderItemDAO itemDao, OrderDAO orderDao) throws SQLException {
-    while (true) {
+    boolean exit = false;
+    while (!exit) {
         System.out.println("\n--- УПРАВЛЕНИЕ ЗАКАЗАМИ ---");
-        System.out.println("1. Список ВСЕХ заказов");
+        System.out.println("1. Список ВСЕХ заказов (узнать ID)");
         System.out.println("2. Посмотреть позиции конкретного заказа");
         System.out.println("3. Добавить товар в заказ");
         System.out.println("0. Назад");
         System.out.print("Выбор: ");
         
         String choice = sc.nextLine();
-        if ("0".equals(choice)) break;
 
-        if ("1".equals(choice)) {
+        if ("0".equals(choice)) {
+            exit = true;
+        } else if ("1".equals(choice)) {
             System.out.println("\n--- РЕЕСТР ЗАКАЗОВ ---");
             orderDao.getAllOrders().forEach(System.out::println);
-            continue;
-        }
-        
-        System.out.print("Введите UUID заказа (скопируйте из списка выше): ");
-        String idInput = sc.nextLine();
-        if (idInput.isEmpty()) continue;
-        UUID oid = UUID.fromString(idInput);
-
-        if ("2".equals(choice)) {
-            System.out.println("\nСостав заказа:");
-            itemDao.getOrderDetails(oid).forEach(System.out::println);
-        } else if ("3".equals(choice)) {
-            System.out.print("Введите UUID товара: ");
-            UUID pid = UUID.fromString(sc.nextLine());
-            System.out.print("Количество: ");
-            int q = Integer.parseInt(sc.nextLine());
-            itemDao.addProductToOrder(oid, pid, q);
-            System.out.println("Товар успешно добавлен в заказ.");
+        } else if ("2".equals(choice) || "3".equals(choice)) {
+            // Запрашиваем ID только если выбраны пункты 2 или 3
+            System.out.print("Введите UUID заказа: ");
+            String idInput = sc.nextLine();
+            
+            if (!idInput.isEmpty()) {
+                UUID oid = UUID.fromString(idInput);
+                if ("2".equals(choice)) {
+                    itemDao.getOrderDetails(oid).forEach(System.out::println);
+                } else {
+                    System.out.print("Введите UUID товара: ");
+                    UUID pid = UUID.fromString(sc.nextLine());
+                    System.out.print("Количество: ");
+                    int q = Integer.parseInt(sc.nextLine());
+                    itemDao.addProductToOrder(oid, pid, q);
+                    System.out.println("Товар добавлен.");
+                }
+            }
         }
     }
 }
