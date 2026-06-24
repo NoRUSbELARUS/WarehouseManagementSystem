@@ -10,6 +10,7 @@ import java.util.UUID;
 @Data
 public class Order {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     
     @Column(name = "order_type")
@@ -17,6 +18,10 @@ public class Order {
     
     private String status;
     
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 }

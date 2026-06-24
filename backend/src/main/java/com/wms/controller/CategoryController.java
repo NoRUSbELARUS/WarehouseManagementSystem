@@ -1,5 +1,6 @@
 package com.wms.controller;
 
+import com.wms.dto.CategoryDTO;
 import com.wms.entity.Category;
 import com.wms.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@CrossOrigin
 public class CategoryController {
     private final CategoryService service;
 
@@ -21,13 +21,17 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category create(@RequestBody Category category) {
+    public Category create(@RequestBody CategoryDTO dto) {
+        Category category = new Category();
+        category.setName(dto.name());
         return service.save(category);
     }
 
     @PutMapping("/{id}")
-    public Category update(@PathVariable UUID id, @RequestBody Category category) {
+    public Category update(@PathVariable UUID id, @RequestBody CategoryDTO dto) {
+        Category category = new Category();
         category.setId(id);
+        category.setName(dto.name());
         return service.save(category);
     }
 

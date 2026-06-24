@@ -10,7 +10,9 @@ import java.util.UUID;
 @Data
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private String sku;
     private String name;
     
@@ -20,4 +22,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
 }
