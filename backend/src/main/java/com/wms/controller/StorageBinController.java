@@ -1,35 +1,39 @@
 package com.wms.controller;
 
 import com.wms.dto.StorageBinDTO;
-import com.wms.entity.InventoryBalance;
 import com.wms.entity.StorageBin;
+import com.wms.repository.*;
 import com.wms.service.WarehouseService;
-import com.wms.repository.InventoryBalanceRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
-import java.util.List;
 
 @RestController
 @RequestMapping("/bins")
 @RequiredArgsConstructor
 public class StorageBinController {
     private final WarehouseService warehouseService;
-    private final InventoryBalanceRepository inventoryRepository;
+    private final StorageBinRepository binRepository;
 
     @GetMapping
-    public List<StorageBin> getAll() {
-        return warehouseService.findAllBins(); 
+    public Page<StorageBin> getAll(
+            @RequestParam(required = false) String code,
+            Pageable pageable) { 
+        if (code != null) return binRepository.findByBinCodeContaining(code, pageable);
+        return binRepository.findAll(pageable);
     }
 
-    @GetMapping("/{id}/contents")
-    public List<InventoryBalance> getBinContents(@PathVariable UUID id) {
-        return inventoryRepository.findByStorageBinId(id);
+    @PutMapping("/{id}")
+    public StorageBin update(@PathVariable UUID id, @RequestBody StorageBinDTO dto) {
+        return warehouseService.updateBin(id, dto);
     }
 
-    @PostMapping
-    public StorageBin create(@RequestBody StorageBinDTO dto) {
-        return warehouseService.saveBin(dto);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
+        binRepository.deleteById(id);
     }
 }

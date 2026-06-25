@@ -1,11 +1,14 @@
 package com.wms.service;
 
+import com.wms.dto.StorageBinDTO;
+import com.wms.dto.WarehouseDTO;
 import com.wms.entity.StorageBin;
 import com.wms.entity.Warehouse;
 import com.wms.repository.StorageBinRepository;
 import com.wms.repository.WarehouseRepository;
-import com.wms.dto.StorageBinDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,46 +18,46 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WarehouseService {
+
     private final WarehouseRepository warehouseRepository;
-    private final StorageBinRepository binRepository;
+    private final StorageBinRepository storageBinRepository;
 
     public List<Warehouse> findAll() {
         return warehouseRepository.findAll();
     }
 
-    public Warehouse save(Warehouse warehouse) {
+    public Warehouse findById(UUID id) {
+        return warehouseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Склад не найден с ID: " + id));
+    }
+
+    @Transactional
+    public Warehouse createWarehouse(WarehouseDTO dto) {
+        Warehouse warehouse = new Warehouse();
+        warehouse.setName(dto.name());
+        warehouse.setAddress(dto.address());
         return warehouseRepository.save(warehouse);
     }
 
-    public void delete(UUID id) {
+    @Transactional
+    public Warehouse updateWarehouse(UUID id, WarehouseDTO dto) {
+        Warehouse warehouse = findById(id);
+        warehouse.setName(dto.name());
+        warehouse.setAddress(dto.address());
+        return warehouseRepository.save(warehouse);
+    }
+
+    @Transactional
+    public void deleteWarehouse(UUID id) {
         warehouseRepository.deleteById(id);
     }
 
-    public List<StorageBin> findBinsByWarehouse(UUID warehouseId) {
-        return binRepository.findByWarehouse_Id(warehouseId);
+    public Page<StorageBin> findAllBins(Pageable pageable) {
+        return storageBinRepository.findAll(pageable);
     }
 
-    public StorageBin saveBin(UUID warehouseId, StorageBin bin) {
-        Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new RuntimeException("Склад не найден"));
-        bin.setWarehouse(warehouse);
-        return binRepository.save(bin);
-    }
-
-    public StorageBin updateBin(UUID warehouseId, UUID binId, StorageBin bin) {
-        Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new RuntimeException("Склад не найден"));
-        bin.setId(binId);
-        bin.setWarehouse(warehouse);
-        return binRepository.save(bin);
-    }
-
-    public void deleteBin(UUID binId) {
-        binRepository.deleteById(binId);
-    }
-
-    public List<StorageBin> findAllBins() {
-        return binRepository.findAll();
+    public List<StorageBin> getBinsByWarehouse(UUID warehouseId) {
+        return storageBinRepository.findByWarehouseId(warehouseId);
     }
 
     @Transactional
@@ -62,8 +65,31 @@ public class WarehouseService {
         StorageBin bin = new StorageBin();
         bin.setBinCode(dto.binCode());
         bin.setZone(dto.zone());
-        bin.setWarehouse(warehouseRepository.findById(dto.warehouseId())
-                .orElseThrow(() -> new RuntimeException("Склад не найден")));
-        return binRepository.save(bin);
+        
+        Warehouse warehouse = findById(dto.warehouseId());
+        bin.setWarehouse(warehouse);
+        
+        return storageBinRepository.save(bin);
+    }
+
+    @Transactional
+    public StorageBin updateBin(UUID id, StorageBinDTO dto) {
+        StorageBin bin = storageBinRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ячейка не найдена с ID: " + id));
+
+        bin.setBinCode(dto.binCode());
+        bin.setZone(dto.zone());
+
+        if (dto.warehouseId() != null) {
+            Warehouse warehouse = findById(dto.warehouseId());
+            bin.setWarehouse(warehouse);
+        }
+
+        return storageBinRepository.save(bin);
+    }
+
+    @Transactional
+    public void deleteBin(UUID id) {
+        storageBinRepository.deleteById(id);
     }
 }

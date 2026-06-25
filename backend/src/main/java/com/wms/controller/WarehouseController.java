@@ -12,6 +12,7 @@ import java.util.UUID;
 @RequestMapping("/warehouses")
 @RequiredArgsConstructor
 public class WarehouseController {
+
     private final WarehouseService service;
 
     @GetMapping
@@ -21,23 +22,16 @@ public class WarehouseController {
 
     @PostMapping
     public Warehouse create(@RequestBody WarehouseDTO dto) {
-        Warehouse wh = new Warehouse();
-        wh.setName(dto.name());
-        wh.setAddress(dto.address());
-        return service.save(wh);
+        return service.createWarehouse(dto);
     }
 
     @PutMapping("/{id}")
     public Warehouse update(@PathVariable UUID id, @RequestBody WarehouseDTO dto) {
-        Warehouse wh = new Warehouse();
-        wh.setId(id);
-        wh.setName(dto.name());
-        wh.setAddress(dto.address());
-        return service.save(wh);
+        return service.updateWarehouse(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
-        service.delete(id);
+        service.deleteWarehouse(id);
     }
 }
