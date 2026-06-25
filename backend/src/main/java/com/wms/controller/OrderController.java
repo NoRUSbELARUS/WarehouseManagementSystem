@@ -12,25 +12,33 @@ import java.util.UUID;
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
-    private final OrderService service;
+
+    private final OrderService orderService;
 
     @GetMapping
     public List<Order> getAll() {
-        return service.findAll();
+        return orderService.findAll();
+    }
+
+    @PutMapping("/{id}")
+    public Order updateOrder(@PathVariable UUID id, @RequestBody OrderDTO dto) {
+        Order order = new Order();
+        order.setId(id);
+        order.setOrderType(dto.orderType());
+        order.setStatus(dto.status());
+        return orderService.saveWithEmployee(order, dto.employeeId());
     }
 
     @PostMapping
-    @SuppressWarnings("java:S4684") // Sonar: DTO used correctly here
     public Order create(@RequestBody OrderDTO dto) {
         Order order = new Order();
         order.setOrderType(dto.orderType());
         order.setStatus(dto.status());
-        // Employee mapping via Service
-        return service.saveWithEmployee(order, dto.employeeId());
+        return orderService.saveWithEmployee(order, dto.employeeId());
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
-        service.delete(id);
+        orderService.delete(id);
     }
 }

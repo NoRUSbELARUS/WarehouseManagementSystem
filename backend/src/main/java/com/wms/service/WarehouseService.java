@@ -4,8 +4,10 @@ import com.wms.entity.StorageBin;
 import com.wms.entity.Warehouse;
 import com.wms.repository.StorageBinRepository;
 import com.wms.repository.WarehouseRepository;
+import com.wms.dto.StorageBinDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,5 +51,19 @@ public class WarehouseService {
 
     public void deleteBin(UUID binId) {
         binRepository.deleteById(binId);
+    }
+
+    public List<StorageBin> findAllBins() {
+        return binRepository.findAll();
+    }
+
+    @Transactional
+    public StorageBin saveBin(StorageBinDTO dto) {
+        StorageBin bin = new StorageBin();
+        bin.setBinCode(dto.binCode());
+        bin.setZone(dto.zone());
+        bin.setWarehouse(warehouseRepository.findById(dto.warehouseId())
+                .orElseThrow(() -> new RuntimeException("Склад не найден")));
+        return binRepository.save(bin);
     }
 }

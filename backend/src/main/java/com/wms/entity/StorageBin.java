@@ -17,7 +17,6 @@ public class StorageBin {
 
     private String zone;
 
-    // Связь: ячейка принадлежит конкретному складу
     @ManyToOne
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;

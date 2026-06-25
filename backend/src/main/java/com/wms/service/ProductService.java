@@ -23,7 +23,6 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    // Тот самый метод для работы с DTO
     @Transactional
     public Product saveFromDto(Product product, UUID categoryId, UUID supplierId) {
         if (categoryId != null) {

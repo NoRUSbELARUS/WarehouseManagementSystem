@@ -25,7 +25,6 @@ public class ProductController {
         product.setSku(dto.sku());
         product.setName(dto.name());
         product.setUnitPrice(dto.unitPrice());
-        // Сервис должен уметь находить Category и Supplier по их UUID
         return service.saveFromDto(product, dto.categoryId(), dto.supplierId());
     }
 
