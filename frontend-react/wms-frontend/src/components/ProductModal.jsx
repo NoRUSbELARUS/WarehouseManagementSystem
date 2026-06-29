@@ -12,7 +12,6 @@ const ProductModal = ({ open, onClose, initialData }) => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ sku: '', name: '', unitPrice: '', categoryId: '', supplierId: '' });
 
-  // Эффект для заполнения формы при редактировании
   useEffect(() => {
     if (initialData) {
       setForm({

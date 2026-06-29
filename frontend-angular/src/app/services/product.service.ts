@@ -1,0 +1,32 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Product, Category, Supplier, ProductDTO } from '../models/product.model';
+
+@Injectable({ providedIn: 'root' })
+export class ProductService {
+  private apiUrl = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) {}
+
+  getProducts(): Observable<Product[]> { return this.http.get<Product[]>(`${this.apiUrl}/products`); }
+  createProduct(dto: ProductDTO): Observable<Product> {
+    return this.http.post<Product>(`${this.apiUrl}/products`, this.toPayload(dto));
+  }
+  updateProduct(id: string, dto: ProductDTO): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/products/${id}`, this.toPayload(dto));
+  }
+
+  private toPayload(dto: ProductDTO) {
+    return {
+      sku: dto.sku,
+      name: dto.name,
+      unitPrice: dto.unitPrice,
+      category: { id: dto.categoryId },
+      supplier: { id: dto.supplierId },
+    };
+  }
+  deleteProduct(id: string): Observable<void> { return this.http.delete<void>(`${this.apiUrl}/products/${id}`); }
+  getCategories(): Observable<Category[]> { return this.http.get<Category[]>(`${this.apiUrl}/categories`); }
+  getSuppliers(): Observable<Supplier[]> { return this.http.get<Supplier[]>(`${this.apiUrl}/suppliers`); }
+}

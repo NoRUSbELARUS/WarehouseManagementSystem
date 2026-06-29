@@ -1,0 +1,44 @@
+// src/app/app.component.scss
+
+.container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h1 {
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.search-field {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.mat-elevation-z8 {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+.mat-column-price {
+  width: 150px;
+}
