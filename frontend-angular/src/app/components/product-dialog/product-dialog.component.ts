@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ProductService } from '../../services/product.service';
 import { Category, Supplier, Product } from '../../models/product.model';
-
+import { SupplierService } from '../../services/supplier.service';
 @Component({
   selector: 'app-product-dialog',
   standalone: true,
@@ -58,8 +58,9 @@ export class ProductDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
+    private supplierService: SupplierService,
     public dialogRef: MatDialogRef<ProductDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Product | null
+    @Inject(MAT_DIALOG_DATA) public data: Product
   ) {
     this.productForm = this.fb.group({
       sku: [data?.sku || '', Validators.required],
@@ -71,18 +72,18 @@ export class ProductDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productService.getCategories().subscribe(res => this.categories = res);
-    this.productService.getSuppliers().subscribe(res => this.suppliers = res);
-  }
+  this.productService.getCategories().subscribe((res: Category[]) => this.categories = res);
+  this.supplierService.getSuppliers().subscribe((res: Supplier[]) => this.suppliers = res); // Исправлено
+}
 
   onNoClick(): void { this.dialogRef.close(); }
 
   save() {
     if (this.productForm.valid) {
-      const obs = this.data 
+      const obs = this.data
         ? this.productService.updateProduct(this.data.id, this.productForm.value)
         : this.productService.createProduct(this.productForm.value);
-      
+
       obs.subscribe(() => this.dialogRef.close(true));
     }
   }

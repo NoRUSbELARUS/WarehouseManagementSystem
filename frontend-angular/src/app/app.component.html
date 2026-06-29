@@ -1,55 +1,38 @@
-<div style="padding: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1 style="margin: 0;">WMS Angular Dashboard</h1>
-    <button mat-raised-button color="primary" (click)="openDialog()">
-      <mat-icon>add</mat-icon> Добавить товар
-    </button>
-  </div>
+<mat-toolbar color="primary">
+  <span>WMS Control Panel</span>
+</mat-toolbar>
 
-  <mat-form-field appearance="outline" style="width: 100%; margin-top: 20px;">
-    <mat-label>Поиск по SKU или Названию</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Введите текст для поиска...">
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
+<mat-sidenav-container style="height: calc(100vh - 64px);">
+  <mat-sidenav mode="side" opened style="width: 250px;">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/products" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>inventory</mat-icon>
+        <span matListItemTitle>Товары</span>
+      </a>
+      <a mat-list-item routerLink="/inventory" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>assignment</mat-icon>
+        <span matListItemTitle>Остатки</span>
+      </a>
+      <a mat-list-item routerLink="/warehouses" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>warehouse</mat-icon>
+        <span matListItemTitle>Склады</span>
+      </a>
+      <a mat-list-item routerLink="/orders" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>shopping_cart</mat-icon>
+        <span matListItemTitle>Заказы</span>
+      </a>
+      <a mat-list-item routerLink="/suppliers" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>local_shipping</mat-icon>
+        <span matListItemTitle>Поставщики</span>
+      </a>
+      <a mat-list-item routerLink="/employees" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>people</mat-icon>
+        <span matListItemTitle>Персонал</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
 
-  <div class="mat-elevation-z8" style="margin-top: 10px; background: white; border-radius: 4px;">
-    <table mat-table [dataSource]="dataSource" matSort>
-      
-      <ng-container matColumnDef="sku">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> SKU </th>
-        <td mat-cell *matCellDef="let row"> {{row.sku}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Название </th>
-        <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef> Категория </th>
-        <td mat-cell *matCellDef="let row"> {{row.category?.name || '—'}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Цена </th>
-        <td mat-cell *matCellDef="let row"> {{row.unitPrice | number}} ₽ </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Действия </th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-icon-button color="primary" (click)="openDialog(row)"> 
-            <mat-icon>edit</mat-icon> 
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteProduct(row.id)"> 
-            <mat-icon>delete</mat-icon> 
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
-  </div>
-</div>
+  <mat-sidenav-content style="background: #fafafa;">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
