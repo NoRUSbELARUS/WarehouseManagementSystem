@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "storage_bins")
 @Data
@@ -18,6 +20,7 @@ public class StorageBin {
     private String zone;
 
     @ManyToOne
-    @JoinColumn(name = "warehouse_id", nullable = false)
+    @JoinColumn(name = "warehouse_id")
+    @JsonIgnoreProperties({ "storageBins", "hibernateLazyInitializer", "handler" })
     private Warehouse warehouse;
 }

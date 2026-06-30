@@ -22,7 +22,7 @@ public class InventoryBalance {
     @ManyToOne
     @MapsId("binId")
     @JoinColumn(name = "bin_id")
-    @JsonIgnoreProperties({"warehouse", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private StorageBin storageBin;
 
     @Column(name = "total_quantity")

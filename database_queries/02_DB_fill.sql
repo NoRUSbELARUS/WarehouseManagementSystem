@@ -52,4 +52,22 @@ CROSS JOIN LATERAL (
     SELECT id, unit_price FROM products ORDER BY random() LIMIT 3
 ) p;
 
+-- 8. Создание ячеек (STORAGE_BINS) - Этого у вас не было
+INSERT INTO storage_bins (warehouse_id, bin_code, zone)
+SELECT 
+    id, 
+    'A-0' || i || '-01', 
+    'Зона хранения'
+FROM warehouses, generate_series(1, 3) s(i);
+
+-- 9. Создание остатков (INVENTORY_BALANCES) - Этого тоже не было
+INSERT INTO inventory_balances (bin_id, product_id, total_quantity)
+SELECT 
+    b.id, 
+    p.id, 
+    (random() * 100 + 5)::int
+FROM storage_bins b
+CROSS JOIN LATERAL (
+    SELECT id FROM products ORDER BY random() LIMIT 2
+) p;
 COMMIT;

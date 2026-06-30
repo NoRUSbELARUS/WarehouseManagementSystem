@@ -24,7 +24,7 @@ export class WarehouseListComponent implements OnInit {
   warehouses: Warehouse[] = [];
   selectedWh: Warehouse | null = null;
   bins: StorageBin[] = [];
-  
+
   displayedColumns: string[] = ['name', 'address', 'actions'];
   binColumns: string[] = ['code', 'zone', 'binActions'];
 
@@ -33,7 +33,7 @@ export class WarehouseListComponent implements OnInit {
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private zone: NgZone
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadWarehouses();
@@ -50,21 +50,16 @@ export class WarehouseListComponent implements OnInit {
     });
   }
 
-  // ФУНКЦИЯ ДЛЯ ГЛАЗИКА: Загрузка ячеек
   loadBins(wh: Warehouse): void {
     this.selectedWh = wh;
     this.whService.getBinsByWarehouse(wh.id).subscribe({
       next: (res) => {
-        this.zone.run(() => {
-          this.bins = res;
-          this.cdr.detectChanges(); // Принудительно показываем таблицу ячеек
-        });
-      },
-      error: (err) => console.error('Ошибка загрузки ячеек:', err)
+        this.bins = res;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  // --- Управление Складами ---
   openWhDialog(wh?: Warehouse): void {
     const dialogRef = this.dialog.open(WarehouseDialogComponent, { width: '400px', data: wh });
     dialogRef.afterClosed().subscribe(result => { if (result) this.loadWarehouses(); });
@@ -85,7 +80,6 @@ export class WarehouseListComponent implements OnInit {
     });
   }
 
-  // --- Управление Ячейками ---
   openBinDialog(bin?: StorageBin): void {
     if (!this.selectedWh) return;
     const dialogRef = this.dialog.open(StorageBinDialogComponent, {

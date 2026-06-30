@@ -35,6 +35,7 @@ export const routes: Routes = [
     component: SupplierListComponent, 
     title: 'WMS - Поставщики' 
   },
+  
   { path: '', redirectTo: 'products', pathMatch: 'full' },
   { path: '**', redirectTo: 'products' }
 ];
