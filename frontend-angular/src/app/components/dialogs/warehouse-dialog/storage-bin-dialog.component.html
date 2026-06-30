@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Редактировать ячейку' : 'Новая ячейка' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="binForm" class="dialog-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Код ячейки</mat-label>
+      <input matInput formControlName="binCode" placeholder="Напр: A-01-01">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Зона</mat-label>
+      <input matInput formControlName="zone" placeholder="Напр: Хранение">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Отмена</button>
+  <button mat-raised-button color="primary" [disabled]="binForm.invalid" (click)="save()">Сохранить</button>
+</mat-dialog-actions>

@@ -1,6 +1,7 @@
 package com.wms.controller;
 
 import com.wms.dto.WarehouseDTO;
+import com.wms.entity.StorageBin;
 import com.wms.entity.Warehouse;
 import com.wms.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,11 @@ public class WarehouseController {
     @GetMapping
     public List<Warehouse> getAll() {
         return service.findAll();
+    }
+
+    @GetMapping("/{id}/bins")
+    public List<StorageBin> getBins(@PathVariable UUID id) {
+        return service.getBinsByWarehouse(id);
     }
 
     @PostMapping

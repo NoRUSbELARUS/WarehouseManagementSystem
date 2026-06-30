@@ -22,9 +22,15 @@ public class StorageBinController {
     @GetMapping
     public Page<StorageBin> getAll(
             @RequestParam(required = false) String code,
-            Pageable pageable) { 
-        if (code != null) return binRepository.findByBinCodeContaining(code, pageable);
+            Pageable pageable) {
+        if (code != null)
+            return binRepository.findByBinCodeContaining(code, pageable);
         return binRepository.findAll(pageable);
+    }
+
+    @PostMapping
+    public StorageBin create(@RequestBody StorageBinDTO dto) {
+        return warehouseService.saveBin(dto);
     }
 
     @PutMapping("/{id}")

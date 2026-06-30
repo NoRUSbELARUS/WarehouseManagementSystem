@@ -36,10 +36,6 @@ export class WarehouseService {
     return this.http.get<StorageBin[]>(`${this.apiUrl}/warehouses/${whId}/bins`);
   }
 
-  createBin(dto: StorageBinDTO): Observable<StorageBin> {
-    return this.http.post<StorageBin>(`${this.apiUrl}/bins`, dto);
-  }
-
   getBinContents(binId: string): Observable<InventoryBalance[]> {
     return this.http.get<InventoryBalance[]>(`${this.apiUrl}/bins/${binId}/contents`);
   }
@@ -55,5 +51,16 @@ export class WarehouseService {
     return this.http.delete<void>(`${this.apiUrl}/inventory`, {
       params: { binId, productId }
     });
+  }
+  createBin(dto: StorageBinDTO): Observable<StorageBin> {
+    return this.http.post<StorageBin>(`${this.apiUrl}/bins`, dto);
+  }
+
+  updateBin(id: string, dto: StorageBinDTO): Observable<StorageBin> {
+    return this.http.put<StorageBin>(`${this.apiUrl}/bins/${id}`, dto);
+  }
+
+  deleteBin(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/bins/${id}`);
   }
 }

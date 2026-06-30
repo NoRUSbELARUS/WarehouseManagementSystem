@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/c
 import { WarehouseService } from '../../services/warehouse.service';
 import { InventoryBalance } from '../../models/inventory-balance.model';
 import { InventoryDialogComponent } from '../../components/dialogs/inventory-dialog/inventory-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-inventory-list',
@@ -15,8 +16,9 @@ import { InventoryDialogComponent } from '../../components/dialogs/inventory-dia
   imports: [
     CommonModule,
     MatTableModule,
-    MatChipsModule,
+    MatButtonModule,
     MatIconModule,
+    MatChipsModule,
     MatDialogModule
   ],
   templateUrl: './inventory-list.component.html',
