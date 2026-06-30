@@ -1,0 +1,15 @@
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 10px;
+  min-width: 350px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-dialog-content {
+  overflow-x: hidden;
+}

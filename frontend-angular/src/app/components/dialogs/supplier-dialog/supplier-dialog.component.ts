@@ -11,28 +11,12 @@ import { Supplier } from '../../../models/supplier.model';
   selector: 'app-supplier-dialog',
   standalone: true,
   imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>{{ data ? 'Редактировать поставщика' : 'Новый поставщик' }}</h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
-        <mat-form-field appearance="outline">
-          <mat-label>Название компании</mat-label>
-          <input matInput formControlName="name">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="contactEmail" type="email">
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">Сохранить</button>
-    </mat-dialog-actions>
-  `
+  templateUrl: './supplier-dialog.component.html',
+  styleUrls: ['./supplier-dialog.component.scss']
 })
 export class SupplierDialogComponent {
   form: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private service: SupplierService,
@@ -44,9 +28,12 @@ export class SupplierDialogComponent {
       contactEmail: [data?.contactEmail || '', [Validators.required, Validators.email]]
     });
   }
+
   save() {
     if (this.form.valid) {
-      const req = this.data ? this.service.updateSupplier(this.data.id, this.form.value) : this.service.createSupplier(this.form.value);
+      const req = this.data 
+        ? this.service.updateSupplier(this.data.id, this.form.value) 
+        : this.service.createSupplier(this.form.value);
       req.subscribe(() => this.dialogRef.close(true));
     }
   }

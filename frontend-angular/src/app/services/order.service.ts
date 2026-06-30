@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order, OrderDTO, OrderItem } from '../models/order.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apiUrl = 'http://localhost:8080/api/orders';
+  private apiUrl = `${environment.apiUrl}/orders`; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(this.apiUrl);
@@ -32,6 +33,12 @@ export class OrderService {
   addItemToOrder(orderId: string, productId: string, quantity: number): Observable<OrderItem> {
     return this.http.post<OrderItem>(`${this.apiUrl}/${orderId}/items`, null, {
       params: { productId, quantity: quantity.toString() }
+    });
+  }
+
+  removeItemFromOrder(orderId: string, productId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${orderId}/items`, {
+      params: { productId }
     });
   }
 }

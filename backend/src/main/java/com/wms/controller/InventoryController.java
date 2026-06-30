@@ -7,32 +7,43 @@ import com.wms.entity.InventoryBalance;
 import com.wms.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/inventory")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class InventoryController {
     private final InventoryService inventoryService;
 
-    @PostMapping
-    public InventoryBalance add(@RequestBody InventoryBalanceDTO dto) {
-        return inventoryService.addInventory(dto);
+    @PutMapping
+    public InventoryBalance update(
+            @RequestParam UUID binId,
+            @RequestParam UUID productId,
+            @RequestParam Integer quantity) {
+        return inventoryService.updateQuantity(binId, productId, quantity);
     }
 
-    @PutMapping("/{id}")
-    public InventoryBalance update(@PathVariable UUID id, @RequestParam Integer quantity) {
-        return inventoryService.updateQuantity(id, quantity);
+    @DeleteMapping
+    public void delete(
+            @RequestParam UUID binId,
+            @RequestParam UUID productId) {
+        inventoryService.delete(binId, productId);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
-        inventoryService.delete(id);
+    @GetMapping
+    public List<InventoryBalance> getAll() {
+        return inventoryService.findAll();
     }
 
     @GetMapping("/product/{productId}")
     public Page<InventoryBalance> getByProduct(@PathVariable UUID productId, Pageable pageable) {
         return inventoryService.getByProduct(productId, pageable);
+    }
+
+    @PostMapping
+    public InventoryBalance create(@RequestBody InventoryBalanceDTO dto) {
+        return inventoryService.createInventory(dto);
     }
 }

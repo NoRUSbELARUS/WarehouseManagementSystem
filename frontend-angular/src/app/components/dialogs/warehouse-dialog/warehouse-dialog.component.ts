@@ -11,28 +11,12 @@ import { Warehouse } from '../../../models/warehouse.model';
   selector: 'app-warehouse-dialog',
   standalone: true,
   imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>{{ data ? 'Редактировать склад' : 'Добавить склад' }}</h2>
-    <mat-dialog-content>
-      <form [formGroup]="whForm" style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
-        <mat-form-field appearance="outline">
-          <mat-label>Название склада</mat-label>
-          <input matInput formControlName="name">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Адрес</mat-label>
-          <input matInput formControlName="address">
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="whForm.invalid" (click)="save()">Сохранить</button>
-    </mat-dialog-actions>
-  `
+  templateUrl: './warehouse-dialog.component.html',
+  styleUrls: ['./warehouse-dialog.component.scss']
 })
 export class WarehouseDialogComponent {
   whForm: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private service: WarehouseService,
@@ -44,9 +28,12 @@ export class WarehouseDialogComponent {
       address: [data?.address || '', Validators.required]
     });
   }
+
   save() {
     if (this.whForm.valid) {
-      const req = this.data ? this.service.updateWarehouse(this.data.id, this.whForm.value) : this.service.createWarehouse(this.whForm.value);
+      const req = this.data 
+        ? this.service.updateWarehouse(this.data.id, this.whForm.value) 
+        : this.service.createWarehouse(this.whForm.value);
       req.subscribe(() => this.dialogRef.close(true));
     }
   }

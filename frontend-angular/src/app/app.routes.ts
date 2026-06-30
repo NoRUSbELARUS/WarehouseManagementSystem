@@ -4,6 +4,7 @@ import { WarehouseListComponent } from './pages/warehouses/warehouse-list.compon
 import { OrderListComponent } from './pages/orders/order-list.component';
 import { EmployeeListComponent } from './pages/employees/employee-list.component';
 import { SupplierListComponent } from './pages/suppliers/supplier-list.component';
+import { InventoryListComponent } from './pages/inventory/inventory-list.component';
 
 export const routes: Routes = [
   { 
@@ -11,6 +12,9 @@ export const routes: Routes = [
     component: ProductListComponent, 
     title: 'WMS - Товары' 
   },
+  { path: 'inventory',
+     component: InventoryListComponent,
+      title: 'WMS - Остатки' },
   { 
     path: 'warehouses', 
     component: WarehouseListComponent, 

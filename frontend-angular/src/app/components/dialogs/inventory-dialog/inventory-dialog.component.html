@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Разместить товар в ячейку</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Товар</mat-label>
+      <mat-select formControlName="productId">
+        @for (p of products; track p.id) {
+          <mat-option [value]="p.id">{{p.sku}} - {{p.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Склад</mat-label>
+      <mat-select formControlName="warehouseId" (selectionChange)="onWarehouseChange($event.value)">
+        @for (w of warehouses; track w.id) {
+          <mat-option [value]="w.id">{{w.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ячейка</mat-label>
+      <mat-select formControlName="binId" [disabled]="!form.get('warehouseId')?.value">
+        @for (b of bins; track b.id) {
+          <mat-option [value]="b.id">{{b.binCode}} ({{b.zone}})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Количество</mat-label>
+      <input matInput type="number" formControlName="quantity">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Отмена</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">Разместить</button>
+</mat-dialog-actions>

@@ -13,30 +13,17 @@ import { Product } from '../../../models/product.model';
 @Component({
   selector: 'app-order-item-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>Добавить товар в заказ</h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
-        <mat-form-field appearance="outline">
-          <mat-label>Выберите товар</mat-label>
-          <mat-select formControlName="productId">
-            @for (prod of products; track prod.id) {
-              <mat-option [value]="prod.id">{{prod.sku}} - {{prod.name}}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Количество</mat-label>
-          <input matInput type="number" formControlName="quantity">
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">Добавить</button>
-    </mat-dialog-actions>
-  `
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    MatDialogModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatSelectModule, 
+    MatButtonModule
+  ],
+  templateUrl: './order-item-dialog.component.html',
+  styleUrls: ['./order-item-dialog.component.scss']
 })
 export class OrderItemDialogComponent implements OnInit {
   form: FormGroup;

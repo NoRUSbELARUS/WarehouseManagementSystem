@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { Warehouse, WarehouseDTO } from '../models/warehouse.model';
 import { StorageBin, StorageBinDTO } from '../models/storage-bin.model';
 import { InventoryBalance } from '../models/inventory-balance.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class WarehouseService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getWarehouses(): Observable<Warehouse[]> {
     return this.http.get<Warehouse[]>(`${this.apiUrl}/warehouses`);
@@ -41,5 +42,18 @@ export class WarehouseService {
 
   getBinContents(binId: string): Observable<InventoryBalance[]> {
     return this.http.get<InventoryBalance[]>(`${this.apiUrl}/bins/${binId}/contents`);
+  }
+
+  getAllInventory(): Observable<InventoryBalance[]> {
+    return this.http.get<InventoryBalance[]>(`${this.apiUrl}/inventory`);
+  }
+  createInventory(dto: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/inventory`, dto);
+  }
+
+  deleteInventory(binId: string, productId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/inventory`, {
+      params: { binId, productId }
+    });
   }
 }

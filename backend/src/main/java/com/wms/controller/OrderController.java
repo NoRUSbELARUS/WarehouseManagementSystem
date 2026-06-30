@@ -2,6 +2,7 @@ package com.wms.controller;
 
 import com.wms.dto.OrderDTO;
 import com.wms.entity.Order;
+import com.wms.entity.OrderItem;
 import com.wms.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +21,14 @@ public class OrderController {
         return orderService.findAll();
     }
 
+    @GetMapping("/{id}/items")
+    public List<OrderItem> getOrderItems(@PathVariable UUID id) {
+        return orderService.getOrderItems(id);
+    }
+
     @PutMapping("/{id}")
-    public Order updateOrder(@PathVariable UUID id, @RequestBody OrderDTO dto) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderType(dto.orderType());
-        order.setStatus(dto.status());
-        return orderService.saveWithEmployee(order, dto.employeeId());
+    public Order update(@PathVariable UUID id, @RequestBody OrderDTO dto) {
+        return orderService.updateOrder(id, dto);
     }
 
     @PostMapping

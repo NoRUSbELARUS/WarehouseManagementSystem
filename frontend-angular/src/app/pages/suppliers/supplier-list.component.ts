@@ -12,8 +12,15 @@ import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/c
 @Component({
   selector: 'app-supplier-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
-  templateUrl: './supplier-list.component.html'
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule
+  ],
+  templateUrl: './supplier-list.component.html',
+  styleUrls: ['./supplier-list.component.scss']
 })
 export class SupplierListComponent implements OnInit {
   suppliers: Supplier[] = [];

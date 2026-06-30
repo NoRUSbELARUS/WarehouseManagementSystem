@@ -13,7 +13,8 @@ import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/c
   selector: 'app-employee-list',
   standalone: true,
   imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
-  templateUrl: './employee-list.component.html'
+  templateUrl: './employee-list.component.html',
+  styleUrls: ['./employee-list.component.scss']
 })
 export class EmployeeListComponent implements OnInit {
   employees: Employee[] = [];

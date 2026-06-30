@@ -15,8 +15,19 @@ import { ProductDialogComponent } from '../../components/product-dialog/product-
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule],
-  templateUrl: './product-list.component.html'
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDialogModule
+  ],
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent implements OnInit {
   displayedColumns: string[] = ['sku', 'name', 'category', 'price', 'actions'];
@@ -27,7 +38,9 @@ export class ProductListComponent implements OnInit {
 
   constructor(private productService: ProductService, private dialog: MatDialog) {}
 
-  ngOnInit() { this.loadProducts(); }
+  ngOnInit() {
+    this.loadProducts();
+  }
 
   loadProducts() {
     this.productService.getProducts().subscribe(res => {
@@ -43,8 +56,13 @@ export class ProductListComponent implements OnInit {
   }
 
   openDialog(product?: Product) {
-    const dialogRef = this.dialog.open(ProductDialogComponent, { width: '450px', data: product });
-    dialogRef.afterClosed().subscribe(result => { if (result) this.loadProducts(); });
+    const dialogRef = this.dialog.open(ProductDialogComponent, {
+      width: '450px',
+      data: product
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadProducts();
+    });
   }
 
   deleteProduct(id: string) {

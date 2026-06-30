@@ -10,7 +10,7 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Название склада </th>
       <td mat-cell *matCellDef="let w" (click)="loadBins(w)" class="clickable-cell"> 
-        {{w.name}} <mat-icon style="font-size: 14px;">visibility</mat-icon>
+        {{w.name}} <mat-icon class="visibility-icon">visibility</mat-icon>
       </td>
     </ng-container>
     <ng-container matColumnDef="address">

@@ -8,35 +8,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { EmployeeService } from '../../../services/employee.service';
 import { Employee } from '../../../models/employee.model';
 import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-employee-dialog',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>{{ data ? 'Редактировать сотрудника' : 'Новый сотрудник' }}</h2>
-    <mat-dialog-content>
-      <form [formGroup]="empForm" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-        <mat-form-field appearance="outline">
-          <mat-label>Имя</mat-label>
-          <input matInput formControlName="firstName">
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline">
-          <mat-label>Фамилия</mat-label>
-          <input matInput formControlName="lastName">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Роль / Должность</mat-label>
-          <input matInput formControlName="role" placeholder="Например: Кладовщик">
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Отмена</button>
-      <button mat-raised-button color="primary" [disabled]="empForm.invalid" (click)="save()">Сохранить</button>
-    </mat-dialog-actions>
-  `
+  templateUrl: './employee-dialog.component.html',
+  styleUrls: ['./employee-dialog.component.scss']
 })
 export class EmployeeDialogComponent {
   empForm: FormGroup;

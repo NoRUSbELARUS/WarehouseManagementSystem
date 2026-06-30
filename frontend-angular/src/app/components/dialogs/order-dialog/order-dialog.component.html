@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Редактировать заказ' : 'Создать новый заказ' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="order-form">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Тип заказа</mat-label>
+      <mat-select formControlName="orderType">
+        <mat-option value="INBOUND">Приход (Inbound)</mat-option>
+        <mat-option value="OUTBOUND">Расход (Outbound)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Статус</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="DRAFT">Черновик (Draft)</mat-option>
+        <mat-option value="PROCESSING">В обработке (Processing)</mat-option>
+        <mat-option value="COMPLETED">Завершен (Completed)</mat-option>
+        <mat-option value="CANCELLED">Отменен (Cancelled)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Ответственный сотрудник</mat-label>
+      <mat-select formControlName="employeeId">
+        @for (emp of employees; track emp.id) {
+          <mat-option [value]="emp.id">{{emp.firstName}} {{emp.lastName}}</mat-option>
+        }
+      </mat-select>
+      <mat-hint *ngIf="employees.length === 0">Загрузка списка сотрудников...</mat-hint>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Отмена</button>
+  <button mat-raised-button color="primary" 
+          [disabled]="form.invalid" 
+          (click)="save()">
+    {{ isEdit ? 'Сохранить изменения' : 'Создать заказ' }}
+  </button>
+</mat-dialog-actions>

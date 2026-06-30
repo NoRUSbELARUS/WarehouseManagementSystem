@@ -14,8 +14,16 @@ import { ConfirmDialogComponent } from '../../components/shared/confirm-dialog/c
 @Component({
   selector: 'app-warehouse-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule],
-  templateUrl: './warehouse-list.component.html'
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule
+  ],
+  templateUrl: './warehouse-list.component.html',
+  styleUrls: ['./warehouse-list.component.scss']
 })
 export class WarehouseListComponent implements OnInit {
   warehouses: Warehouse[] = [];
@@ -53,7 +61,10 @@ export class WarehouseListComponent implements OnInit {
   }
 
   openWhDialog(wh?: Warehouse): void {
-    const dialogRef = this.dialog.open(WarehouseDialogComponent, { width: '400px', data: wh });
+    const dialogRef = this.dialog.open(WarehouseDialogComponent, {
+      width: '400px',
+      data: wh
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) this.loadWarehouses();
     });
