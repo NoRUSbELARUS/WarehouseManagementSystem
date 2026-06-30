@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -26,7 +26,7 @@ import { Employee } from '../../../models/employee.model';
   templateUrl: './order-dialog.component.html',
   styleUrl: './order-dialog.component.scss'
 })
-export class OrderDialogComponent implements OnInit {
+export class OrderDialogComponent implements OnInit, AfterViewInit {
   form: FormGroup;
   employees: Employee[] = [];
   isEdit: boolean = false;
@@ -35,11 +35,11 @@ export class OrderDialogComponent implements OnInit {
     private fb: FormBuilder,
     private orderService: OrderService,
     private employeeService: EmployeeService,
+    private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<OrderDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.isEdit = !!data;
-
     this.form = this.fb.group({
       orderType: [data?.orderType || 'INBOUND', Validators.required],
       status: [data?.status || 'DRAFT', Validators.required],
@@ -49,9 +49,16 @@ export class OrderDialogComponent implements OnInit {
 
   ngOnInit() {
     this.employeeService.getEmployees().subscribe({
-      next: (res) => this.employees = res,
-      error: (err) => console.error('Ошибка при загрузке сотрудников:', err)
+      next: (res) => {
+        this.employees = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки сотрудников:', err)
     });
+  }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
   }
 
   save() {
@@ -63,7 +70,7 @@ export class OrderDialogComponent implements OnInit {
 
     request.subscribe({
       next: () => this.dialogRef.close(true),
-      error: (err) => alert('Ошибка при сохранении заказа: ' + err.message)
+      error: (err) => alert('Ошибка при сохранении: ' + err.message)
     });
   }
 }

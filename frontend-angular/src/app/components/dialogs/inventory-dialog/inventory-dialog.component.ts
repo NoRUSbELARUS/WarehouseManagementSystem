@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -17,12 +17,12 @@ import { StorageBin } from '../../../models/storage-bin.model';
   selector: 'app-inventory-dialog',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
+    CommonModule, 
+    ReactiveFormsModule, 
+    MatDialogModule, 
+    MatFormFieldModule, 
+    MatSelectModule, 
+    MatInputModule, 
     MatButtonModule
   ],
   templateUrl: './inventory-dialog.component.html',
@@ -38,6 +38,7 @@ export class InventoryDialogComponent implements OnInit {
     private fb: FormBuilder,
     private whService: WarehouseService,
     private productService: ProductService,
+    private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<InventoryDialogComponent>
   ) {
     this.form = this.fb.group({
@@ -49,21 +50,51 @@ export class InventoryDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productService.getProducts().subscribe(res => this.products = res);
-    this.whService.getWarehouses().subscribe(res => this.warehouses = res);
+    this.productService.getProducts().subscribe({
+      next: (res) => {
+        this.products = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки товаров:', err)
+    });
+
+    // 2. Загружаем склады
+    this.whService.getWarehouses().subscribe({
+      next: (res) => {
+        this.warehouses = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки складов:', err)
+    });
   }
 
   onWarehouseChange(whId: string) {
-    this.whService.getBinsByWarehouse(whId).subscribe(res => {
-      this.bins = res;
-      this.form.get('binId')?.setValue('');
+    if (!whId) return;
+    
+    this.whService.getBinsByWarehouse(whId).subscribe({
+      next: (res) => {
+        this.bins = res;
+        this.form.get('binId')?.setValue('');
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки ячеек:', err)
     });
   }
 
   save() {
     if (this.form.valid) {
-      this.whService.createInventory(this.form.value).subscribe(() => {
-        this.dialogRef.close(true);
+      const formData = {
+        productId: this.form.value.productId,
+        binId: this.form.value.binId,
+        quantity: this.form.value.quantity
+      };
+
+      this.whService.createInventory(formData).subscribe({
+        next: () => this.dialogRef.close(true),
+        error: (err) => {
+          console.error('Ошибка размещения товара:', err);
+          alert('Не удалось разместить товар. Проверьте остатки.');
+        }
       });
     }
   }

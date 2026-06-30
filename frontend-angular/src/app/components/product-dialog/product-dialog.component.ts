@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+
 import { ProductService } from '../../services/product.service';
 import { Category, Supplier, Product } from '../../models/product.model';
 import { SupplierService } from '../../services/supplier.service';
@@ -34,6 +35,7 @@ export class ProductDialogComponent implements OnInit {
     private fb: FormBuilder,
     private productService: ProductService,
     private supplierService: SupplierService,
+    private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<ProductDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product
   ) {
@@ -47,8 +49,21 @@ export class ProductDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productService.getCategories().subscribe((res: Category[]) => this.categories = res);
-    this.supplierService.getSuppliers().subscribe((res: Supplier[]) => this.suppliers = res);
+    this.productService.getCategories().subscribe({
+      next: (res: Category[]) => {
+        this.categories = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки категорий:', err)
+    });
+
+    this.supplierService.getSuppliers().subscribe({
+      next: (res: Supplier[]) => {
+        this.suppliers = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Ошибка загрузки поставщиков:', err)
+    });
   }
 
   onNoClick(): void {
@@ -57,11 +72,19 @@ export class ProductDialogComponent implements OnInit {
 
   save() {
     if (this.productForm.valid) {
-      const obs = this.data
-        ? this.productService.updateProduct(this.data.id, this.productForm.value)
-        : this.productService.createProduct(this.productForm.value);
+      const productData = this.productForm.value;
 
-      obs.subscribe(() => this.dialogRef.close(true));
+      const obs = this.data?.id
+        ? this.productService.updateProduct(this.data.id, productData)
+        : this.productService.createProduct(productData);
+
+      obs.subscribe({
+        next: () => this.dialogRef.close(true),
+        error: (err) => {
+          console.error('Ошибка при сохранении:', err);
+          alert('Не удалось сохранить товар. Проверьте данные.');
+        }
+      });
     }
   }
 }
